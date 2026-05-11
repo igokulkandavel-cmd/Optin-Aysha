@@ -71,66 +71,60 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333]">
-      {/* HERO */}
-      <section className="bg-gradient-to-br from-[#667eea] to-[#764ba2] px-5 py-16 md:py-24">
-        <div className="mx-auto max-w-4xl rounded-3xl bg-white p-8 shadow-2xl md:p-14">
-          <div className="text-center">
-            <span className="inline-block rounded-full bg-[#f3f0ff] px-4 py-1.5 text-sm font-semibold text-[#764ba2]">
-              FREE LIVE WEBINAR
-            </span>
-            <h1 className="mt-5 text-3xl font-extrabold leading-tight text-[#1f2937] md:text-5xl">
-              இலவச PCOS Masterclass
-            </h1>
-            <p className="mt-4 text-lg text-[#555] md:text-2xl">
-              PCOS Symptoms Reverse பண்ற Proven Method
-            </p>
-            <div className="mt-7 inline-flex flex-wrap items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-[#667eea] to-[#764ba2] px-6 py-4 text-white shadow-lg">
-              <span className="font-semibold">📅 31.05.2026</span>
-              <span className="opacity-60">|</span>
-              <span className="font-semibold">⏰ 11:00 AM – 01:00 PM IST</span>
-            </div>
-            <div className="mt-8">
-              <button
-                onClick={scrollToForm}
-                className="rounded-full bg-gradient-to-r from-[#667eea] to-[#764ba2] px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl md:text-lg"
-              >
-                Secure My Seat (இலவசம்) →
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* HERO + VSL */}
+      <section className="bg-gradient-to-br from-[#1a1a2e] via-[#2d1b4e] to-[#764ba2] px-5 py-10 md:py-14">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80 md:text-sm">
+            Brand New! Exclusive Free Training Reveals…
+          </p>
+          <h1 className="mx-auto mt-4 max-w-3xl text-2xl font-extrabold leading-tight text-white md:text-4xl lg:text-5xl">
+            இலவச PCOS Masterclass — PCOS Symptoms Reverse பண்ற Proven Method
+          </h1>
 
-      {/* VSL VIDEO */}
-      <section className="px-5 py-12 md:py-16">
-        <div className="mx-auto max-w-5xl">
-          <div className="overflow-hidden rounded-2xl bg-black shadow-2xl">
-            <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1e]">
-                <button
-                  aria-label="Play video"
-                  onClick={() => {
-                    // @ts-expect-error fbq
-                    if (typeof window !== "undefined" && window.fbq)
+          <div className="mx-auto mt-8 max-w-4xl">
+            <div className="overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-white/10">
+              <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1e]">
+                  <button
+                    aria-label="Play video"
+                    onClick={() => {
                       // @ts-expect-error fbq
-                      window.fbq("track", "ViewContent");
-                    console.log("Video play tracked");
-                  }}
-                  className="group flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-2xl transition-transform hover:scale-110 md:h-24 md:w-24"
-                >
-                  <svg
-                    className="ml-1 h-8 w-8 text-[#764ba2] md:h-10 md:w-10"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
+                      if (typeof window !== "undefined" && window.fbq)
+                        // @ts-expect-error fbq
+                        window.fbq("track", "ViewContent");
+                      console.log("Video play tracked");
+                    }}
+                    className="group flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-2xl transition-transform hover:scale-110 md:h-24 md:w-24"
                   >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </button>
-                <p className="absolute bottom-6 text-sm text-white/70">
-                  ▶ Watch this 2-min video before registering
-                </p>
+                    <svg
+                      className="ml-1 h-8 w-8 text-[#764ba2] md:h-10 md:w-10"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </button>
+                  <p className="absolute bottom-6 text-sm text-white/70">
+                    ▶ Watch this video before registering
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className="mt-8">
+            <button
+              onClick={scrollToForm}
+              className="w-full max-w-xl rounded-xl bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-8 py-5 text-base font-extrabold uppercase tracking-wide text-white shadow-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl md:text-lg"
+            >
+              ✓ Yes, Reserve My Seat Now!
+            </button>
+          </div>
+
+          <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-3 text-white/90">
+            <span className="text-sm">Online Training Starts in:</span>
+            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">📅 31.05.2026</span>
+            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">⏰ 11:00 AM IST</span>
           </div>
         </div>
       </section>
