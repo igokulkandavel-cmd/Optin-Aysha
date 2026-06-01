@@ -79,12 +79,16 @@ function Landing() {
       console.log("Webinar registration:", payload);
 
       if (GOOGLE_SCRIPT_URL !== "YOUR_GOOGLE_SCRIPT_WEB_APP_URL") {
-        const formData = new FormData();
-        Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
+        const searchParams = new URLSearchParams();
+        Object.entries(payload).forEach(([key, value]) => searchParams.append(key, value));
 
         await fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
-          body: formData,
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: searchParams.toString(),
         });
       } else {
         console.warn("Google Script URL is missing. Simulating request...");

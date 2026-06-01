@@ -98,13 +98,17 @@ export default function App() {
       
       console.log("Webinar registration:", payload);
 
-      const formData = new FormData();
-      Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
+      const searchParams = new URLSearchParams();
+      Object.entries(payload).forEach(([key, value]) => searchParams.append(key, value));
 
       // Submit to Google Sheets (Highly reliable, zero adblocker issues)
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
-        body: formData,
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: searchParams.toString(),
       });
 
       // @ts-expect-error fbq global
