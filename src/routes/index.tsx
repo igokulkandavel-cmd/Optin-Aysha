@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import { Features } from "@/components/ui/features-4";
+import { Video } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -8,7 +10,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "PCOS Symptoms Reverse பண்ற Proven Method. Free Live Webinar with Clinical Dietitian Aysha Nasreen on 31.05.2026.",
+          "PCOS Symptoms Reverse பண்ற Proven Method. Free Live Webinar with Clinical Dietitian Aysha Nasreen on 14.06.2026.",
       },
       { property: "og:title", content: "இலவச PCOS Masterclass — Aysha Nasreen" },
       {
@@ -25,7 +27,7 @@ type FormState = { name: string; mobile: string; email: string; consent: boolean
 type Errors = Partial<Record<keyof FormState, string>>;
 
 function Landing() {
-  const formRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState<FormState>({
     name: "",
     mobile: "",
@@ -35,9 +37,17 @@ function Landing() {
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [zoomImage, setZoomImage] = useState<string | null>(null);
 
-  const scrollToForm = () =>
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    if (success) {
+      setSuccess(false);
+      setForm({ name: "", mobile: "", email: "", consent: true });
+    }
+  };
 
   const validate = (): boolean => {
     const e: Errors = {};
@@ -50,20 +60,43 @@ function Landing() {
     return Object.keys(e).length === 0;
   };
 
+  // Google Apps Script Web App URL for Sheets integration
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3Szfq8dec9iGIJJXOs254lwb4vqtOClG-Xf75qxm6R3c44sHA5_z2AVbRH5ChiME/exec";
+
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (!validate()) return;
     setLoading(true);
     try {
-      console.log("Webinar registration:", {
-        ...form,
-        timestamp: new Date().toISOString(),
+      const payload = {
+        name: form.name,
+        mobile: form.mobile,
+        email: form.email,
+        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
         source: "webinar_vsl_page",
-      });
+      };
+      
+      console.log("Webinar registration:", payload);
+
+      if (GOOGLE_SCRIPT_URL !== "YOUR_GOOGLE_SCRIPT_WEB_APP_URL") {
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
+
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: formData,
+        });
+      } else {
+        console.warn("Google Script URL is missing. Simulating request...");
+        await new Promise((r) => setTimeout(r, 800));
+      }
+
       // @ts-expect-error fbq global
       if (typeof window !== "undefined" && window.fbq) window.fbq("track", "Lead");
-      await new Promise((r) => setTimeout(r, 800));
       setSuccess(true);
+    } catch (error) {
+      console.error("Submission failed:", error);
+      alert("Oops! Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -72,41 +105,62 @@ function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333]">
       {/* HERO + VSL */}
-      <section className="bg-gradient-to-br from-[#1a1a2e] via-[#2d1b4e] to-[#764ba2] px-5 py-10 md:py-14">
+      <section className="bg-gradient-to-br from-[#064e3b] to-[#0f766e] px-5 py-10 md:py-14">
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80 md:text-sm">
-            Brand New! Exclusive Free Training Reveals…
+            Exclusive FREE Training Reveals…
           </p>
-          <h1 className="mx-auto mt-4 max-w-3xl text-2xl font-extrabold leading-tight text-white md:text-4xl lg:text-5xl">
-            இலவச PCOS Masterclass — PCOS Symptoms Reverse பண்ற Proven Method
+          <div className="mx-auto mb-4 mt-4 inline-flex items-center gap-2 rounded-lg bg-[#022c22] px-4 py-2 font-black tracking-widest text-white shadow-2xl ring-1 ring-white/10">
+            <span>LIVE</span>
+            <div className="flex items-center justify-center rounded bg-[#ff0000] px-2 py-1">
+              <Video className="h-4 w-4 fill-white text-white" />
+            </div>
+            <span>ZOOM</span>
+          </div>
+          <h1 className="mx-auto mt-2 text-2xl font-extrabold leading-tight text-white md:text-4xl lg:text-5xl">
+            FREE PCOS Masterclass:<br className="hidden sm:block" /> PCOS Symptoms Reverse பண்ற Proven Method
           </h1>
 
           <div className="mx-auto mt-8 max-w-4xl">
             <div className="overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-white/10">
               <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1e]">
-                  <button
-                    aria-label="Play video"
-                    onClick={() => {
+                <div className="absolute inset-0 bg-black">
+                  <video
+                    id="vsl-video"
+                    className="h-full w-full object-contain"
+                    controls={isVideoPlaying}
+                    preload="metadata"
+                    poster="/vsl-thumbnail.jpg"
+                    onPlay={() => {
+                      setIsVideoPlaying(true);
                       // @ts-expect-error fbq
                       if (typeof window !== "undefined" && window.fbq)
                         // @ts-expect-error fbq
                         window.fbq("track", "ViewContent");
                       console.log("Video play tracked");
                     }}
-                    className="group flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-2xl transition-transform hover:scale-110 md:h-24 md:w-24"
+                    onPause={() => setIsVideoPlaying(false)}
                   >
-                    <svg
-                      className="ml-1 h-8 w-8 text-[#764ba2] md:h-10 md:w-10"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
+                    <source src="/vsl-video.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  {!isVideoPlaying && (
+                    <div 
+                      className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer transition-colors hover:bg-black/40 group"
+                      onClick={() => {
+                        const vid = document.getElementById("vsl-video") as HTMLVideoElement;
+                        if (vid) {
+                          vid.play();
+                        }
+                      }}
                     >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                  <p className="absolute bottom-6 text-sm text-white/70">
-                    ▶ Watch this video before registering
-                  </p>
+                      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-2xl transition-transform group-hover:scale-110 md:h-24 md:w-24">
+                        <svg className="ml-1 h-8 w-8 text-[#0f766e] md:h-10 md:w-10" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -114,62 +168,38 @@ function Landing() {
 
           <div className="mt-8">
             <button
-              onClick={scrollToForm}
+              onClick={openModal}
               className="w-full max-w-xl rounded-xl bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-8 py-5 text-base font-extrabold uppercase tracking-wide text-white shadow-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl md:text-lg"
             >
-              ✓ Yes, Reserve My Seat Now!
+              ✓ START MY PCOS HEALING JOURNEY
             </button>
           </div>
 
           <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-3 text-white/90">
             <span className="text-sm">Online Training Starts in:</span>
-            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">📅 31.05.2026</span>
+            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">📅 14.06.2026</span>
             <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">⏰ 11:00 AM IST</span>
           </div>
         </div>
       </section>
 
       {/* DETAILS GRID */}
-      <section className="px-5 py-12 md:py-16">
-        <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-2">
-          <DetailCard icon="🎯" title="இந்த Webinar-ல நீங்க கத்துப்பீங்க:">
-            <li>4 வகை PCOS — உங்களுது எது?</li>
-            <li>ஏன் generic diet work ஆகல?</li>
-            <li>Kitchen-லேயே இருக்குற powerful foods (வெந்தயம், கொள்ளு, பட்டை)</li>
-            <li>Ennoda protocol எப்படி work ஆகும்?</li>
-            <li>Blood sugar, insulin, hormones எப்படி control பண்றது?</li>
-          </DetailCard>
-          <DetailCard icon="✅" title="இந்த Webinar யாருக்கு?">
-            <li>Period irregular-ஆ இருக்குறவங்க (35+ days gap)</li>
-            <li>Weight loss try பண்ணி fail ஆனவங்க</li>
-            <li>Belly fat stubborn-ஆ இருக்குறவங்க</li>
-            <li>Mood swings, fatigue, brain fog அதிகம்</li>
-            <li>Dark patches (neck, underarms)</li>
-            <li>Future fertility பத்தி worried ஆ இருக்குறவங்க</li>
-          </DetailCard>
-          <DetailCard icon="🎁" title="நீங்க கிடைக்கும்:">
-            <li>Live Q&amp;A with Aysha Nasreen (12 years experience)</li>
-            <li>7-day meal plan template (FREE download)</li>
-            <li>Kitchen remedies PDF (வெந்தயம், கொள்ளு usage guide)</li>
-            <li>Lifetime access to webinar recording</li>
-            <li>WhatsApp support group invitation</li>
-          </DetailCard>
-          <DetailCard icon="📅" title="Webinar Details:">
-            <li><b>Date:</b> 31.05.2026</li>
-            <li><b>Time:</b> 11:00 AM – 01:00 PM IST</li>
-            <li><b>Duration:</b> 2 hours (Live + Q&amp;A)</li>
-            <li><b>Platform:</b> Zoom (link via WhatsApp)</li>
-            <li><b>Price:</b> 100% இலவசம் (FREE)</li>
-            <li><b>Seats:</b> Limited to 100 participants</li>
-          </DetailCard>
-        </div>
-      </section>
+      <Features />
 
-      {/* REGISTRATION FORM */}
-      <section ref={formRef} id="register" className="px-5 py-12 md:py-20">
-        <div className="mx-auto max-w-2xl rounded-3xl bg-white p-7 shadow-xl md:p-12">
-          <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">
-            இப்போவே Register பண்ணுங்க — Seats Limited!
+      {/* REGISTRATION FORM MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="relative max-h-[95vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-7 shadow-2xl md:p-12">
+            <button
+              onClick={closeModal}
+              className="absolute right-4 top-4 rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">
+            Register For FREE — Seats Limited!
           </h2>
           <p className="mt-2 text-center text-[#555]">
             Webinar link WhatsApp-ல instant-ஆ கிடைக்கும்
@@ -189,27 +219,27 @@ function Landing() {
                 📧 Email-லும் confirmation அனுப்பியாச்சு.
               </p>
               <div className="mt-4 rounded-xl bg-white p-4 text-sm">
-                📅 31.05.2026 &nbsp;•&nbsp; ⏰ 11:00 AM – 01:00 PM IST
+                📅 14.06.2026 &nbsp;•&nbsp; ⏰ 11:00 AM – 01:00 PM IST
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-7 space-y-5" noValidate>
               <Field
-                label="👤 உங்க பெயர் *"
+                label="Name *"
                 error={errors.name}
                 input={
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="உங்க பெயர்"
+                    placeholder="Name"
                     className="form-input"
                     required
                   />
                 }
               />
               <Field
-                label="📱 Mobile Number (WhatsApp-க்கு) *"
+                label="WhatsApp Number *"
                 error={errors.mobile}
                 input={
                   <input
@@ -225,7 +255,7 @@ function Landing() {
                 }
               />
               <Field
-                label="📧 Email *"
+                label="Email *"
                 error={errors.email}
                 input={
                   <input
@@ -239,16 +269,6 @@ function Landing() {
                 }
               />
 
-              <label className="flex items-start gap-3 text-sm text-[#555]">
-                <input
-                  type="checkbox"
-                  checked={form.consent}
-                  onChange={(e) => setForm({ ...form, consent: e.target.checked })}
-                  className="mt-1 h-5 w-5 accent-[#764ba2]"
-                />
-                <span>WhatsApp-ல webinar link + reminders receive பண்ணணும்</span>
-              </label>
-
               <button
                 type="submit"
                 disabled={loading}
@@ -260,7 +280,7 @@ function Landing() {
                     Securing...
                   </span>
                 ) : (
-                  "Secure My Seat (இலவசம்) →"
+                  "Secure My FREE Seat →"
                 )}
               </button>
 
@@ -274,8 +294,9 @@ function Landing() {
               </p>
             </form>
           )}
+          </div>
         </div>
-      </section>
+      )}
 
       {/* SPEAKER */}
       <section className="px-5 py-12 md:py-16">
@@ -284,9 +305,7 @@ function Landing() {
             Meet Your Speaker
           </h2>
           <div className="mt-8 flex flex-col items-center gap-8 md:flex-row md:items-start">
-            <div className="flex h-40 w-40 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] text-5xl font-bold text-white shadow-xl">
-              AN
-            </div>
+            <img src="/speaker.png" alt="Aysha Nasreen" className="h-40 w-40 shrink-0 rounded-full bg-[#f5f3ff] object-cover shadow-xl ring-4 ring-[#764ba2]/20" />
             <div>
               <h3 className="text-xl font-bold text-[#1f2937]">Aysha Nasreen</h3>
               <p className="text-sm text-[#764ba2]">
@@ -310,25 +329,80 @@ function Landing() {
         </div>
       </section>
 
+      {/* EVENT GLIMPSES */}
+      <section className="bg-gray-50/50 px-5 py-12 md:py-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">
+            Trusted by Hundreds at Our Live Workshops
+          </h2>
+          <p className="mx-auto mt-3 max-w-3xl text-center text-base text-[#555] leading-relaxed">
+            Aysha Nasreen regularly conducts physical masterclasses. Now, for the first time, you can access her proven protocol from the comfort of your home via our online webinar!
+          </p>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            <div className="overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl">
+              <img src="/event1.png" alt="Live seminar slide presentation" className="h-64 w-full object-cover object-center transition-transform duration-500 hover:scale-105" />
+            </div>
+            <div className="overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl">
+              <img src="/event2.jpg" alt="Live seminar explanation" className="h-64 w-full object-cover object-center transition-transform duration-500 hover:scale-105" />
+            </div>
+            <div className="overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl">
+              <img src="/event3.jpg" alt="Live seminar exercises" className="h-64 w-full object-cover object-center transition-transform duration-500 hover:scale-105" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* TESTIMONIALS */}
       <section className="px-5 py-12 md:py-16">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-6xl text-center">
           <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">
             What Women Are Saying
           </h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            <Testimonial
-              quote="Aysha ma'am-ஓட personalized diet plan follow பண்ணி 3 months-ல 8kg weight loss. Periods regular ஆச்சு, energy levels doubled!"
-              name="— Ramya, Chennai"
-            />
-            <Testimonial
-              quote="High cholesterol, bloating எல்லாம் இருந்தது. Cholesterol improved, more energy, feeling much healthier overall!"
-              name="— Client, Coimbatore"
-            />
-            <Testimonial
-              quote="என் college பொண்ணுக்கு periods regular-ஆவே இல்ல. இப்போ regular, face bright and shining. Rombha grateful!"
-              name="— Parent, Madurai"
-            />
+          <p className="mt-2 text-xs text-[#764ba2] font-bold animate-pulse">
+            🔍 Click/Tap any image to zoom & read in full screen
+          </p>
+          <div className="mt-8 flex flex-col gap-8 items-center">
+            <div 
+              onClick={() => setZoomImage("/feedback1.png")}
+              className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
+            >
+              <div className="relative overflow-hidden rounded-2xl">
+                <img 
+                  src="/feedback1.png" 
+                  alt="Mahalakshmi's Webinar Feedback" 
+                  className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                />
+                <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                  <span className="bg-black/75 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+                    🔍 Click to Zoom & Read
+                  </span>
+                </div>
+              </div>
+              <p className="mt-3 text-center text-xs font-semibold text-[#764ba2] pb-1">
+                💬 Live WhatsApp Feedback from Mahalakshmi
+              </p>
+            </div>
+
+            <div 
+              onClick={() => setZoomImage("/feedback2.png")}
+              className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
+            >
+              <div className="relative overflow-hidden rounded-2xl">
+                <img 
+                  src="/feedback2.png" 
+                  alt="Keerthana's Webinar Feedback" 
+                  className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                />
+                <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                  <span className="bg-black/75 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+                    🔍 Click to Zoom & Read
+                  </span>
+                </div>
+              </div>
+              <p className="mt-3 text-center text-xs font-semibold text-[#764ba2] pb-1">
+                💬 Live WhatsApp Feedback from Keerthana
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -340,7 +414,7 @@ function Landing() {
             இன்னும் 23 Seats மட்டும் Available!
           </h2>
           <p className="mt-4 text-lg opacity-95">
-            Webinar 31.05.2026 — 11:00 AM IST-க்கு start ஆகும். Miss பண்ணாதீங்க!
+            Webinar 14.06.2026 — 11:00 AM IST-க்கு start ஆகும். Miss பண்ணாதீங்க!
           </p>
           <ul className="mx-auto mt-6 inline-block text-left text-sm opacity-95">
             <li>✓ உங்க PCOS type</li>
@@ -350,10 +424,10 @@ function Landing() {
           </ul>
           <div className="mt-8">
             <button
-              onClick={scrollToForm}
+              onClick={openModal}
               className="rounded-full bg-white px-8 py-4 text-lg font-bold text-[#764ba2] shadow-2xl transition-all hover:-translate-y-0.5"
             >
-              Secure My Seat Now →
+              Secure My FREE Seat Now →
             </button>
           </div>
           <p className="mt-4 text-xs opacity-80">
@@ -369,21 +443,35 @@ function Landing() {
             Powered by Aysha Nasreen | Clinical Dietitian | 12 Years Experience
           </p>
           <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
-            <span>📞 +91 98765 43210</span>
-            <span>📧 aysha@example.com</span>
+            <span>📞 <a href="tel:+919976192688" className="hover:text-[#764ba2] transition-colors">+91 99761 92688</a></span>
+            <span>📧 <a href="mailto:sheizenwellness@gmail.com" className="hover:text-[#764ba2] transition-colors">sheizenwellness@gmail.com</a></span>
           </div>
-          <div className="mt-3 flex flex-wrap justify-center gap-x-3">
-            <a href="#" className="hover:text-[#764ba2]">Privacy Policy</a>
-            <span>|</span>
-            <a href="#" className="hover:text-[#764ba2]">Terms</a>
-            <span>|</span>
-            <a href="#" className="hover:text-[#764ba2]">Refund Policy</a>
-          </div>
+
           <p className="mt-4 text-xs">
             © 2026 Aysha Nasreen Nutrition. All rights reserved.
           </p>
         </div>
-      </footer>
+      {/* LIGHTBOX ZOOM MODAL */}
+      {zoomImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md cursor-pointer animate-in fade-in duration-200"
+          onClick={() => setZoomImage(null)}
+        >
+          <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
+            <button 
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl font-bold bg-white/10 rounded-full h-10 w-10 flex items-center justify-center transition-colors"
+              onClick={() => setZoomImage(null)}
+            >
+              &times;
+            </button>
+            <img 
+              src={zoomImage} 
+              alt="Zoomed Feedback" 
+              className="w-full h-auto object-contain rounded-2xl max-h-[85vh] shadow-2xl animate-in zoom-in-95 duration-200"
+            />
+          </div>
+        </div>
+      )}
 
       <style>{`
         .form-input {
