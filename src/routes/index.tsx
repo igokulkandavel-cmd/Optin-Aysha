@@ -61,7 +61,7 @@ function Landing() {
   };
 
   // Google Apps Script Web App URL for Sheets integration
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3Szfq8dec9iGIJJXOs254lwb4vqtOClG-Xf75qxm6R3c44sHA5_z2AVbRH5ChiME/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8VewGPmifhRrDk_x2u7PP7VB23SE-2YAS70op1XAmk_YhRcUz6WduqSp1XFfwXkQ/exec";
 
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
