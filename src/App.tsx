@@ -231,22 +231,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* 2×2 BENEFIT GRID */}
-          <div className="mx-auto mt-8 grid max-w-2xl grid-cols-2 gap-3 text-left">
-            {[
-              { icon: "🔍", title: "Know Your PCOS Type", body: "Identify your exact type in the first 20 minutes" },
-              { icon: "🍽️", title: "Eat Right For Your Hormones", body: "A food sequence designed for your specific pattern" },
-              { icon: "❌", title: "Stop Diets That Don't Work", body: "Understand why generic advice keeps failing you" },
-              { icon: "🗓️", title: "Get a 100-Day Roadmap", body: "Step-by-step plan — no more guessing what to eat" },
-            ].map(({ icon, title, body }) => (
-              <div key={title} className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 p-4">
-                <div className="text-xl mb-1">{icon}</div>
-                <p className="text-sm font-bold text-white">{title}</p>
-                <p className="mt-1 text-xs text-white/70 leading-relaxed">{body}</p>
-              </div>
-            ))}
-          </div>
-
           {/* CTA */}
           <div className="mt-8">
             <button
@@ -257,15 +241,12 @@ export default function App() {
             </button>
           </div>
 
-          {/* SOCIAL PROOF + DATE — single compact row */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/70">
-            <span>🔴 <strong className="text-white">847 women</strong> registered</span>
-            <span className="text-white/30">·</span>
-            <span>⚡ <strong className="text-white">23 seats</strong> left</span>
-            <span className="text-white/30">·</span>
-            <span>📅 <strong className="text-white">28.06.2026</strong> · 11 AM IST</span>
-            <span className="text-white/30">·</span>
-            <span>🎓 <strong className="text-white">100% FREE</strong></span>
+          <div className="mt-4 inline-flex flex-wrap items-center justify-center gap-3 text-white/90">
+            <span className="text-sm">📅 28.06.2026</span>
+            <span className="text-white/40">·</span>
+            <span className="text-sm">⏰ 11:00 AM – 1:00 PM IST</span>
+            <span className="text-white/40">·</span>
+            <span className="text-sm">🎓 100% FREE</span>
           </div>
         </div>
       </section>
