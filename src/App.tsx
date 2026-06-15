@@ -211,10 +211,10 @@ export default function App() {
 
           {/* COUNTDOWN TIMER */}
           <div className="mt-8">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-white/70">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/60">
               Webinar starts in
             </p>
-            <div className="inline-flex gap-3 md:gap-5">
+            <div className="inline-flex gap-3 md:gap-4">
               {[
                 { label: "Days", value: timeLeft.days },
                 { label: "Hours", value: timeLeft.hours },
@@ -231,35 +231,21 @@ export default function App() {
             </div>
           </div>
 
-          {/* SUBHEADLINE */}
-          <p className="mx-auto mt-5 max-w-2xl text-base text-white/85 md:text-lg">
-            In this FREE 2-Hour Live Masterclass, Clinical Dietitian <strong className="text-white">Aysha Nasreen</strong> (MPhil Nutrition · 12 Yrs · 100+ Women Helped) explains your PCOS type and gives you a clear, step-by-step food protocol — so you finally know exactly what to eat.
-          </p>
-
-          {/* SOCIAL PROOF BAR */}
-          <div className="mx-auto mt-4 inline-flex flex-wrap items-center justify-center gap-3 rounded-xl bg-white/10 px-5 py-3 text-sm text-white backdrop-blur-sm">
-            <span>🔴 <strong>847 women</strong> already registered</span>
-            <span className="hidden sm:inline text-white/40">|</span>
-            <span>⚡ Only <strong>23 seats</strong> remaining</span>
-            <span className="hidden sm:inline text-white/40">|</span>
-            <span>⭐ <strong>4.9/5</strong> from past attendees</span>
-          </div>
-
-          {/* BENEFIT BULLETS */}
-          <ul className="mx-auto mt-5 max-w-lg space-y-2 text-left text-sm text-white/95 md:text-base">
+          {/* 2×2 BENEFIT GRID */}
+          <div className="mx-auto mt-8 grid max-w-2xl grid-cols-2 gap-3 text-left">
             {[
-              "Identify your exact PCOS type in the first 20 minutes",
-              "The food sequence that supports healthy insulin response and hormone balance",
-              "Why most PCOS diets don't work — and what to do instead",
-              "3 kitchen foods that support hormone health naturally",
-              "The step-by-step 100-day food roadmap Aysha uses with her clients",
-            ].map((b, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="mt-0.5 shrink-0 text-[#6ee7b7]">✓</span>
-                <span>{b}</span>
-              </li>
+              { icon: "🔍", title: "Know Your PCOS Type", body: "Identify your exact type in the first 20 minutes" },
+              { icon: "🍽️", title: "Eat Right For Your Hormones", body: "A food sequence designed for your specific pattern" },
+              { icon: "❌", title: "Stop Diets That Don't Work", body: "Understand why generic advice keeps failing you" },
+              { icon: "🗓️", title: "Get a 100-Day Roadmap", body: "Step-by-step plan — no more guessing what to eat" },
+            ].map(({ icon, title, body }) => (
+              <div key={title} className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 p-4">
+                <div className="text-xl mb-1">{icon}</div>
+                <p className="text-sm font-bold text-white">{title}</p>
+                <p className="mt-1 text-xs text-white/70 leading-relaxed">{body}</p>
+              </div>
             ))}
-          </ul>
+          </div>
 
           {/* CTA */}
           <div className="mt-8">
@@ -269,17 +255,17 @@ export default function App() {
             >
               YES! Reserve My FREE Seat Now →
             </button>
-            <p className="mt-2 text-xs text-white/60">
-              ⚡ Registrations close when seats fill · No waitlist · Zoom link via WhatsApp instantly
-            </p>
           </div>
 
-          <div className="mt-4 inline-flex flex-wrap items-center justify-center gap-3 text-white/90">
-            <span className="text-sm">📅 28.06.2026</span>
-            <span className="text-white/40">·</span>
-            <span className="text-sm">⏰ 11:00 AM – 1:00 PM IST</span>
-            <span className="text-white/40">·</span>
-            <span className="text-sm">🎓 100% FREE</span>
+          {/* SOCIAL PROOF + DATE — single compact row */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/70">
+            <span>🔴 <strong className="text-white">847 women</strong> registered</span>
+            <span className="text-white/30">·</span>
+            <span>⚡ <strong className="text-white">23 seats</strong> left</span>
+            <span className="text-white/30">·</span>
+            <span>📅 <strong className="text-white">28.06.2026</strong> · 11 AM IST</span>
+            <span className="text-white/30">·</span>
+            <span>🎓 <strong className="text-white">100% FREE</strong></span>
           </div>
         </div>
       </section>
