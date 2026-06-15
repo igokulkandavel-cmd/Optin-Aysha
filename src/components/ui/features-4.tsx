@@ -1,7 +1,7 @@
 import {
   Activity, XCircle, Flame, Route, HeartPulse,
   CalendarX, TrendingDown, AlertCircle, BrainCircuit, AlertTriangle, Heart,
-  MessageCircleQuestion, FileText, DownloadCloud, Infinity, MessageSquare,
+  MessageCircleQuestion, FileText, DownloadCloud, MessageSquare,
   Calendar, Clock, Timer, Video, Tag, Users
 } from "lucide-react";
 
@@ -27,8 +27,7 @@ export function Features() {
     { icon: <MessageCircleQuestion className="h-6 w-6" />, title: "Live Q&A", desc: "Direct answers from Aysha Nasreen (12 yrs exp)" },
     { icon: <FileText className="h-6 w-6" />, title: "7-day meal plan", desc: "FREE downloadable template" },
     { icon: <DownloadCloud className="h-6 w-6" />, title: "Kitchen remedies PDF", desc: "Usage guide for fenugreek, horse gram" },
-    { icon: <Infinity className="h-6 w-6" />, title: "Lifetime access", desc: "Watch the webinar recording anytime" },
-    { icon: <MessageSquare className="h-6 w-6" />, title: "WhatsApp support", desc: "Exclusive group invitation" },
+{ icon: <MessageSquare className="h-6 w-6" />, title: "WhatsApp support", desc: "Exclusive group invitation" },
   ];
 
   const detailItems = [
