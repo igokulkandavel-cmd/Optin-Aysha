@@ -31,7 +31,7 @@ export function Features() {
   ];
 
   const detailItems = [
-    { icon: <Calendar className="h-5 w-5" />, title: "Date", desc: "14.06.2026" },
+    { icon: <Calendar className="h-5 w-5" />, title: "Date", desc: "28.06.2026" },
     { icon: <Clock className="h-5 w-5" />, title: "Time", desc: "11:00 AM – 01:00 PM IST" },
     { icon: <Timer className="h-5 w-5" />, title: "Duration", desc: "2 hours (Live + Q&A)" },
     { icon: <Video className="h-5 w-5" />, title: "Platform", desc: "Zoom (link via WhatsApp)" },
