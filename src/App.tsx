@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Features } from "@/components/ui/features-4";
 import { Video } from "lucide-react";
 
@@ -12,118 +12,73 @@ function Testimonial({ quote, name }: { quote: string; name: string }) {
   );
 }
 
-type FormState = { name: string; mobile: string; email: string; consent: boolean };
-type Errors = Partial<Record<keyof FormState, string>>;
+const CRM_FORM_HTML = `<style>
+#dgf_webinar_form *{box-sizing:border-box}
+#dgf_webinar_form .dgf-wrap{background:transparent;border-radius:0;padding:0;box-shadow:none}
+#dgf_webinar_form .dgf-title{display:none}
+#dgf_webinar_form .dgf-field{margin-bottom:16px}
+#dgf_webinar_form .dgf-label{display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:6px}
+#dgf_webinar_form .dgf-req{color:#ef4444;margin-left:2px}
+#dgf_webinar_form .dgf-input{width:100%;padding:14px 16px;border-radius:12px;border:2px solid #e5e7eb;background:#ffffff;font-size:15px;color:#1c1410;outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s}
+#dgf_webinar_form .dgf-input:focus{border-color:#764ba2;box-shadow:0 0 0 4px rgba(118,75,162,.1)}
+#dgf_webinar_form .dgf-btn{width:100%;padding:16px;border-radius:9999px;border:none;font-size:16px;font-weight:700;cursor:pointer;background:linear-gradient(to right,#22c55e,#16a34a);color:#ffffff;margin-top:8px;font-family:inherit;transition:all .2s;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+#dgf_webinar_form .dgf-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 15px -3px rgba(0,0,0,.15)}
+#dgf_webinar_form .dgf-btn:disabled{opacity:.6;cursor:not-allowed}
+#dgf_webinar_form .dgf-ok{text-align:center;padding:32px 16px}
+#dgf_webinar_form .dgf-ok-icon{width:64px;height:64px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+#dgf_webinar_form .dgf-ok-msg{font-size:18px;font-weight:700;color:#1c1410}
+</style>
+<div class="dgf-wrap">
+<form id="dgf_webinar_form_f" novalidate>
+<div class="dgf-field"><label class="dgf-label">Full Name<span class="dgf-req">*</span></label><input type="text" class="dgf-input" data-label="Full Name" placeholder="Your name" required></div>
+<div class="dgf-field"><label class="dgf-label">WhatsApp Number<span class="dgf-req">*</span></label><input type="tel" class="dgf-input" data-label="WhatsApp Number" placeholder="9876543210" required></div>
+<div class="dgf-field"><label class="dgf-label">Email<span class="dgf-req">*</span></label><input type="email" class="dgf-input" data-label="Email" placeholder="yourname@example.com" required></div>
+<button type="submit" class="dgf-btn">Secure My FREE Seat →</button>
+</form>
+</div>`;
 
-function Field({
-  label,
-  input,
-  error,
-}: {
-  label: string;
-  input: React.ReactNode;
-  error?: string;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-semibold text-[#333]">{label}</label>
-      {input}
-      {error && <p className="text-xs font-medium text-rose-500">{error}</p>}
-    </div>
-  );
-}
+const CRM_SCRIPT = `(function(){
+var _m={};
+window.dgf_webinar_form_ms=function(k,el){_m[k]=_m[k]||[];var i=_m[k].indexOf(el.value);el.checked?i<0&&_m[k].push(el.value):i>=0&&_m[k].splice(i,1);};
+document.getElementById('dgf_webinar_form_f').addEventListener('submit',function(e){
+e.preventDefault();
+var btn=e.target.querySelector('button[type=submit]');
+btn.disabled=true;btn.textContent='Submitting…';
+var data={};
+e.target.querySelectorAll('[data-label]').forEach(function(el){
+var k=el.getAttribute('data-label');
+if(el.type==='radio'){if(el.checked)data[k]=el.value;}
+else if(el.type==='checkbox'&&!el.dataset.declaration){data[k]=el.checked?'true':'';}
+else if(el.type!=='checkbox'){data[k]=el.value;}
+});
+Object.keys(_m).forEach(function(k){data[k]=_m[k].join(',');});
+fetch('https://crm.digygo.in/api/public/forms/webinar-form/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:data})})
+.then(function(r){return r.json();})
+.then(function(j){
+document.getElementById('dgf_webinar_form').querySelector('.dgf-wrap').innerHTML='<div class="dgf-ok"><div class="dgf-ok-icon"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#ffffff" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="dgf-ok-msg">'+(j.message||'Thank you!')+'</p></div>';
+if(null)setTimeout(function(){location.href=null;},2000);
+})
+.catch(function(){btn.disabled=false;btn.textContent='Secure My FREE Seat →';alert('Submission failed. Please try again.');});
+});
+})();`;
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [form, setForm] = useState<FormState>({
-    name: "",
-    mobile: "",
-    email: "",
-    consent: true,
-  });
-  const [errors, setErrors] = useState<Errors>({});
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    if (success) {
-      setSuccess(false);
-      setForm({ name: "", mobile: "", email: "", consent: true });
-    }
-  };
+  const closeModal = () => setIsModalOpen(false);
 
-  const cleanMobile = (num: string): string => {
-    let cleaned = num.replace(/\D/g, ""); // strip non-digits
-    // If it has 12 digits and starts with 91 (Indian country code), strip 91
-    if (cleaned.startsWith("91") && cleaned.length === 12) {
-      cleaned = cleaned.slice(2);
-    } 
-    // If it has 11 digits and starts with 0, strip 0
-    else if (cleaned.startsWith("0") && cleaned.length === 11) {
-      cleaned = cleaned.slice(1);
-    }
-    return cleaned;
-  };
-
-  const validate = (cleanedMobile: string): boolean => {
-    const e: Errors = {};
-    if (form.name.trim().length < 2) e.name = "Name must be at least 2 characters";
-    if (!/^[6-9][0-9]{9}$/.test(cleanedMobile))
-      e.mobile = "Enter valid 10-digit mobile (starts with 6-9)";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = "Enter a valid email address";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8VewGPmifhRrDk_x2u7PP7VB23SE-2YAS70op1XAmk_YhRcUz6WduqSp1XFfwXkQ/exec";
-
-  const handleSubmit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
-    const cleanedMobile = cleanMobile(form.mobile);
-    if (!validate(cleanedMobile)) return;
-    setLoading(true);
-    try {
-      const payload = {
-        name: form.name,
-        mobile: cleanedMobile,
-        email: form.email,
-        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-        source: "webinar_vsl_page",
-      };
-      
-      console.log("Webinar registration:", payload);
-
-      const searchParams = new URLSearchParams();
-      Object.entries(payload).forEach(([key, value]) => searchParams.append(key, value));
-
-      // Submit to Google Sheets (Highly reliable, zero adblocker issues)
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: searchParams.toString(),
-      });
-
-      // @ts-expect-error fbq global
-      if (typeof window !== "undefined" && window.fbq) {
-        // @ts-expect-error fbq global
-        window.fbq("track", "Lead");
-      }
-      setSuccess(true);
-    } catch (error) {
-      console.error("Submission failed:", error);
-      alert("Oops! Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!isModalOpen) return;
+    document.getElementById("dgf-crm-script")?.remove();
+    const script = document.createElement("script");
+    script.id = "dgf-crm-script";
+    script.textContent = CRM_SCRIPT;
+    document.body.appendChild(script);
+    return () => { document.getElementById("dgf-crm-script")?.remove(); };
+  }, [isModalOpen]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333]">
@@ -195,7 +150,7 @@ export default function App() {
 
           <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-3 text-white/90">
             <span className="text-sm">Online Training Starts in:</span>
-            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">📅 14.06.2026</span>
+            <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">📅 28.06.2026</span>
             <span className="rounded-md bg-white/10 px-3 py-1 text-sm font-semibold">⏰ 11:00 AM IST</span>
           </div>
         </div>
@@ -204,11 +159,10 @@ export default function App() {
       {/* FEATURES */}
       <Features />
 
-      {/* REGISTRATION MODAL — CRM Embed */}
+      {/* REGISTRATION MODAL — DigyGo CRM Embed */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="relative max-h-[95vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-7 shadow-2xl md:p-12">
-            {/* Close button */}
             <button
               onClick={closeModal}
               className="absolute right-4 top-4 rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
@@ -225,95 +179,20 @@ export default function App() {
               Webinar link WhatsApp-ல instant-ஆ கிடைக்கும்
             </p>
 
-            {success ? (
-              <div className="mt-8 rounded-2xl border-2 border-[#22c55e]/30 bg-[#f0fdf4] p-6 text-center shadow-inner">
-                <div className="text-2xl font-bold text-[#16a34a] animate-bounce">
-                  ✅ Registration Successful!
-                </div>
-                <p className="mt-3 text-base font-semibold text-[#1f2937]">
-                  உங்க webinar seat confirm ஆயிருச்சு!
-                </p>
-                <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-                  📱 Webinar link அடுத்த 5 நிமிஷத்துல WhatsApp-க்கு வரும்.
-                  <br />
-                  📧 Email-லும் confirmation அனுப்பியாச்சு.
-                </p>
-                <div className="mx-auto mt-5 max-w-xs rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#0f766e] shadow-sm border border-emerald-100">
-                  📅 14.06.2026 &nbsp;•&nbsp; ⏰ 11:00 AM – 01:00 PM IST
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="mt-7 space-y-5" noValidate>
-                <Field
-                  label="Name *"
-                  error={errors.name}
-                  input={
-                    <input
-                      type="text"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Name"
-                      className="w-full border-2 border-gray-200 focus:border-[#764ba2] rounded-xl px-4 py-3.5 text-base text-gray-800 bg-white outline-none transition-all focus:ring-4 focus:ring-[#764ba2]/10"
-                      required
-                    />
-                  }
-                />
-                <Field
-                  label="WhatsApp Number *"
-                  error={errors.mobile}
-                  input={
-                    <input
-                      type="tel"
-                      value={form.mobile}
-                      onChange={(e) =>
-                        setForm({ ...form, mobile: e.target.value.replace(/[^\d+\s-]/g, "") })
-                      }
-                      placeholder="9876543210"
-                      className="w-full border-2 border-gray-200 focus:border-[#764ba2] rounded-xl px-4 py-3.5 text-base text-gray-800 bg-white outline-none transition-all focus:ring-4 focus:ring-[#764ba2]/10"
-                      required
-                    />
-                  }
-                />
-                <Field
-                  label="Email *"
-                  error={errors.email}
-                  input={
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="yourname@example.com"
-                      className="w-full border-2 border-gray-200 focus:border-[#764ba2] rounded-xl px-4 py-3.5 text-base text-gray-800 bg-white outline-none transition-all focus:ring-4 focus:ring-[#764ba2]/10"
-                      required
-                    />
-                  }
-                />
+            <div
+              id="dgf_webinar_form"
+              className="mt-7"
+              dangerouslySetInnerHTML={{ __html: CRM_FORM_HTML }}
+            />
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] py-4.5 text-lg font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-70 cursor-pointer active:scale-98"
-                >
-                  {loading ? (
-                    <span className="inline-flex items-center gap-2 justify-center">
-                      <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      Securing...
-                    </span>
-                  ) : (
-                    "Secure My FREE Seat →"
-                  )}
-                </button>
-
-                <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-[#555]">
-                  <span>🔒 100% Free</span>
-                  <span>⚡ Limited Seats</span>
-                  <span>📱 Link via WhatsApp</span>
-                </div>
-                <p className="text-center text-xs text-[#777]">
-                  No spam. Webinar link WhatsApp-ல secure-ஆ அனுப்பப்படும். Privacy guaranteed.
-                </p>
-              </form>
-            )}
+            <div className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-[#555]">
+              <span>🔒 100% Free</span>
+              <span>⚡ Limited Seats</span>
+              <span>📱 Link via WhatsApp</span>
+            </div>
+            <p className="mt-2 text-center text-xs text-[#777]">
+              No spam. Webinar link WhatsApp-ல secure-ஆ அனுப்பப்படும். Privacy guaranteed.
+            </p>
           </div>
         </div>
       )}
@@ -372,14 +251,14 @@ export default function App() {
             🔍 Click/Tap any image to zoom & read in full screen
           </p>
           <div className="mt-8 flex flex-col gap-8 items-center">
-            <div 
+            <div
               onClick={() => setZoomImage("/feedback1.png")}
               className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
             >
               <div className="relative overflow-hidden rounded-2xl">
-                <img 
-                  src="/feedback1.png" 
-                  alt="Mahalakshmi's Webinar Feedback" 
+                <img
+                  src="/feedback1.png"
+                  alt="Mahalakshmi's Webinar Feedback"
                   className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
                 />
                 <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
@@ -393,14 +272,14 @@ export default function App() {
               </p>
             </div>
 
-            <div 
+            <div
               onClick={() => setZoomImage("/feedback2.png")}
               className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
             >
               <div className="relative overflow-hidden rounded-2xl">
-                <img 
-                  src="/feedback2.png" 
-                  alt="Keerthana's Webinar Feedback" 
+                <img
+                  src="/feedback2.png"
+                  alt="Keerthana's Webinar Feedback"
                   className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
                 />
                 <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
@@ -421,7 +300,7 @@ export default function App() {
       <section className="bg-gradient-to-br from-[#667eea] to-[#764ba2] px-5 py-16 text-white">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">இன்னும் 23 Seats மட்டும் Available!</h2>
-          <p className="mt-4 text-lg opacity-95">Webinar 14.06.2026 — 11:00 AM IST-க்கு start ஆகும். Miss பண்ணாதீங்க!</p>
+          <p className="mt-4 text-lg opacity-95">Webinar 28.06.2026 — 11:00 AM IST-க்கு start ஆகும். Miss பண்ணாதீங்க!</p>
           <ul className="mx-auto mt-6 inline-block text-left text-sm opacity-95">
             <li>✓ உங்க PCOS type</li>
             <li>✓ சரியான diet order</li>
@@ -448,27 +327,26 @@ export default function App() {
             <span>📞 <a href="tel:+919976192688" className="hover:text-[#764ba2] transition-colors">+91 99761 92688</a></span>
             <span>📧 <a href="mailto:sheizenwellness@gmail.com" className="hover:text-[#764ba2] transition-colors">sheizenwellness@gmail.com</a></span>
           </div>
-
           <p className="mt-4 text-xs">© 2026 Aysha Nasreen Nutrition. All rights reserved.</p>
         </div>
       </footer>
 
       {/* LIGHTBOX ZOOM MODAL */}
       {zoomImage && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md cursor-pointer animate-in fade-in duration-200"
           onClick={() => setZoomImage(null)}
         >
           <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
-            <button 
+            <button
               className="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl font-bold bg-white/10 rounded-full h-10 w-10 flex items-center justify-center transition-colors"
               onClick={() => setZoomImage(null)}
             >
               &times;
             </button>
-            <img 
-              src={zoomImage} 
-              alt="Zoomed Feedback" 
+            <img
+              src={zoomImage}
+              alt="Zoomed Feedback"
               className="w-full h-auto object-contain rounded-2xl max-h-[85vh] shadow-2xl animate-in zoom-in-95 duration-200"
             />
           </div>
