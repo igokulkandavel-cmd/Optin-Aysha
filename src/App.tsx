@@ -168,38 +168,8 @@ export default function App() {
             <span className="text-[#6ee7b7]">Naturally, Without Expensive Medicines</span>
           </h1>
 
-          {/* SUBHEADLINE */}
-          <p className="mx-auto mt-4 max-w-2xl text-base text-white/85 md:text-lg">
-            Join Clinical Dietitian <strong className="text-white">Aysha Nasreen</strong> (MPhil Nutrition · 12 Yrs · 100+ PCOS Reversals) for a FREE 2-Hour Live Zoom Masterclass — and finally understand WHY your body isn't responding to regular diets.
-          </p>
-
-          {/* SOCIAL PROOF BAR */}
-          <div className="mx-auto mt-5 inline-flex flex-wrap items-center justify-center gap-3 rounded-xl bg-white/10 px-5 py-3 text-sm text-white backdrop-blur-sm">
-            <span>🔴 <strong>847 women</strong> already registered</span>
-            <span className="hidden sm:inline text-white/40">|</span>
-            <span>⚡ Only <strong>23 seats</strong> remaining</span>
-            <span className="hidden sm:inline text-white/40">|</span>
-            <span>⭐ <strong>4.9/5</strong> from past attendees</span>
-          </div>
-
-          {/* BENEFIT BULLETS */}
-          <ul className="mx-auto mt-6 max-w-lg space-y-2 text-left text-sm text-white/95 md:text-base">
-            {[
-              "Identify your exact PCOS type in the first 20 minutes",
-              "The food sequence that lowers insulin and balances hormones naturally",
-              "Why 90% of PCOS diets fail — and what to do instead",
-              "3 kitchen foods that reduce cysts and lower testosterone",
-              "The step-by-step 100-day roadmap Aysha used with 100+ Tamil women",
-            ].map((b, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="mt-0.5 shrink-0 text-[#6ee7b7]">✓</span>
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* VSL VIDEO */}
-          <div className="mx-auto mt-8 max-w-4xl">
+          {/* VSL VIDEO — immediately below headline so it's above the fold */}
+          <div className="mx-auto mt-6 max-w-4xl">
             <div className="overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-white/10">
               <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
                 <div className="absolute inset-0 bg-black">
@@ -260,6 +230,36 @@ export default function App() {
               ))}
             </div>
           </div>
+
+          {/* SUBHEADLINE */}
+          <p className="mx-auto mt-5 max-w-2xl text-base text-white/85 md:text-lg">
+            Join Clinical Dietitian <strong className="text-white">Aysha Nasreen</strong> (MPhil Nutrition · 12 Yrs · 100+ PCOS Reversals) for a FREE 2-Hour Live Zoom Masterclass — and finally understand WHY your body isn't responding to regular diets.
+          </p>
+
+          {/* SOCIAL PROOF BAR */}
+          <div className="mx-auto mt-4 inline-flex flex-wrap items-center justify-center gap-3 rounded-xl bg-white/10 px-5 py-3 text-sm text-white backdrop-blur-sm">
+            <span>🔴 <strong>847 women</strong> already registered</span>
+            <span className="hidden sm:inline text-white/40">|</span>
+            <span>⚡ Only <strong>23 seats</strong> remaining</span>
+            <span className="hidden sm:inline text-white/40">|</span>
+            <span>⭐ <strong>4.9/5</strong> from past attendees</span>
+          </div>
+
+          {/* BENEFIT BULLETS */}
+          <ul className="mx-auto mt-5 max-w-lg space-y-2 text-left text-sm text-white/95 md:text-base">
+            {[
+              "Identify your exact PCOS type in the first 20 minutes",
+              "The food sequence that lowers insulin and balances hormones naturally",
+              "Why 90% of PCOS diets fail — and what to do instead",
+              "3 kitchen foods that reduce cysts and lower testosterone",
+              "The step-by-step 100-day roadmap Aysha used with 100+ Tamil women",
+            ].map((b, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-[#6ee7b7]">✓</span>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
 
           {/* CTA */}
           <div className="mt-8">
