@@ -37,30 +37,7 @@ const CRM_FORM_HTML = `<style>
 </form>
 </div>`;
 
-const CRM_SCRIPT = `(function(){
-var _m={};
-window.dgf_webinar_form_ms=function(k,el){_m[k]=_m[k]||[];var i=_m[k].indexOf(el.value);el.checked?i<0&&_m[k].push(el.value):i>=0&&_m[k].splice(i,1);};
-document.getElementById('dgf_webinar_form_f').addEventListener('submit',function(e){
-e.preventDefault();
-var btn=e.target.querySelector('button[type=submit]');
-btn.disabled=true;btn.textContent='Submitting…';
-var data={};
-e.target.querySelectorAll('[data-label]').forEach(function(el){
-var k=el.getAttribute('data-label');
-if(el.type==='radio'){if(el.checked)data[k]=el.value;}
-else if(el.type==='checkbox'&&!el.dataset.declaration){data[k]=el.checked?'true':'';}
-else if(el.type!=='checkbox'){data[k]=el.value;}
-});
-Object.keys(_m).forEach(function(k){data[k]=_m[k].join(',');});
-fetch('https://crm.digygo.in/api/public/forms/webinar-form/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:data})})
-.then(function(r){return r.json();})
-.then(function(j){
-document.getElementById('dgf_webinar_form').querySelector('.dgf-wrap').innerHTML='<div class="dgf-ok"><div class="dgf-ok-icon"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#ffffff" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="dgf-ok-msg">'+(j.message||'Thank you!')+'</p></div>';
-if(null)setTimeout(function(){location.href=null;},2000);
-})
-.catch(function(){btn.disabled=false;btn.textContent='Secure My FREE Seat →';alert('Submission failed. Please try again.');});
-});
-})();`;
+const CRM_SUCCESS_HTML = `<div class="dgf-ok"><div class="dgf-ok-icon"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#ffffff" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="dgf-ok-msg">Thank you for your submission!</p></div>`;
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,12 +49,40 @@ export default function App() {
 
   useEffect(() => {
     if (!isModalOpen) return;
-    document.getElementById("dgf-crm-script")?.remove();
-    const script = document.createElement("script");
-    script.id = "dgf-crm-script";
-    script.textContent = CRM_SCRIPT;
-    document.body.appendChild(script);
-    return () => { document.getElementById("dgf-crm-script")?.remove(); };
+    const form = document.getElementById("dgf_webinar_form_f") as HTMLFormElement | null;
+    if (!form) return;
+
+    const handleSubmit = async (e: Event) => {
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+      btn.disabled = true;
+      btn.textContent = "Submitting…";
+
+      const data: Record<string, string> = {};
+      form.querySelectorAll<HTMLInputElement>("[data-label]").forEach((el) => {
+        const k = el.getAttribute("data-label")!;
+        if (el.type !== "checkbox" && el.type !== "radio") data[k] = el.value;
+        else if (el.type === "checkbox") data[k] = el.checked ? "true" : "";
+        else if (el.type === "radio" && el.checked) data[k] = el.value;
+      });
+
+      try {
+        await fetch("https://crm.digygo.in/api/public/forms/webinar-form/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data }),
+        });
+        const wrap = document.getElementById("dgf_webinar_form")?.querySelector(".dgf-wrap");
+        if (wrap) wrap.innerHTML = CRM_SUCCESS_HTML;
+      } catch {
+        btn.disabled = false;
+        btn.textContent = "Secure My FREE Seat →";
+        alert("Submission failed. Please try again.");
+      }
+    };
+
+    form.addEventListener("submit", handleSubmit);
+    return () => form.removeEventListener("submit", handleSubmit);
   }, [isModalOpen]);
 
   return (
