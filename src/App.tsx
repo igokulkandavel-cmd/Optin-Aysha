@@ -298,28 +298,46 @@ export default function App() {
               </p>
             </div>
 
-            <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-md border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-2xl">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f3ff]">
-                  <span className="text-[#764ba2] text-base">💬</span>
+            <div
+              onClick={() => setZoomImage("/feedback3.png")}
+              className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
+            >
+              <div className="relative overflow-hidden rounded-2xl">
+                <img
+                  src="/feedback3.png"
+                  alt="WhatsApp Feedback"
+                  className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                />
+                <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                  <span className="bg-black/75 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+                    🔍 Click to Zoom & Read
+                  </span>
                 </div>
-                <p className="leading-relaxed text-[#333] text-sm">
-                  Had know many things like sleep early, no phones before sleep, food sequence but dint follow. Consistency is the important factor learned today. If untreated leads to type 2 diabetes. Felt good to hear our problems and discuss it freely.
-                </p>
               </div>
-              <p className="mt-4 text-xs font-semibold text-[#764ba2] text-right">❤️ Live WhatsApp Feedback</p>
+              <p className="mt-3 text-center text-xs font-semibold text-[#764ba2] pb-1">
+                💬 Live WhatsApp Feedback
+              </p>
             </div>
 
-            <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-md border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-2xl">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f3ff]">
-                  <span className="text-[#764ba2] text-base">💬</span>
+            <div
+              onClick={() => setZoomImage("/feedback4.png")}
+              className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
+            >
+              <div className="relative overflow-hidden rounded-2xl">
+                <img
+                  src="/feedback4.png"
+                  alt="WhatsApp Feedback"
+                  className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                />
+                <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                  <span className="bg-black/75 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+                    🔍 Click to Zoom & Read
+                  </span>
                 </div>
-                <p className="leading-relaxed text-[#333] text-sm">
-                  This session was very informative and beneficial. Through this masterclass, I gained valuable knowledge about my condition and learned practical ways to manage it, including healthy food sequencing, maintaining a proper sleep pattern and stress management. The session was explained clearly, and all my doubts were answered patiently. Thank you so much for clearing all my doubts and conducting such an insightful session.
-                </p>
               </div>
-              <p className="mt-4 text-xs font-semibold text-[#764ba2] text-right">👍 ❤️ Live WhatsApp Feedback</p>
+              <p className="mt-3 text-center text-xs font-semibold text-[#764ba2] pb-1">
+                💬 Live WhatsApp Feedback
+              </p>
             </div>
           </div>
         </div>
