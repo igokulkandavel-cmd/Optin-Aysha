@@ -297,6 +297,30 @@ export default function App() {
                 💬 Live WhatsApp Feedback from Keerthana
               </p>
             </div>
+
+            <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-md border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-2xl">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f3ff]">
+                  <span className="text-[#764ba2] text-base">💬</span>
+                </div>
+                <p className="leading-relaxed text-[#333] text-sm">
+                  Had know many things like sleep early, no phones before sleep, food sequence but dint follow. Consistency is the important factor learned today. If untreated leads to type 2 diabetes. Felt good to hear our problems and discuss it freely.
+                </p>
+              </div>
+              <p className="mt-4 text-xs font-semibold text-[#764ba2] text-right">❤️ Live WhatsApp Feedback</p>
+            </div>
+
+            <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-md border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-2xl">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f3ff]">
+                  <span className="text-[#764ba2] text-base">💬</span>
+                </div>
+                <p className="leading-relaxed text-[#333] text-sm">
+                  This session was very informative and beneficial. Through this masterclass, I gained valuable knowledge about my condition and learned practical ways to manage it, including healthy food sequencing, maintaining a proper sleep pattern and stress management. The session was explained clearly, and all my doubts were answered patiently. Thank you so much for clearing all my doubts and conducting such an insightful session.
+                </p>
+              </div>
+              <p className="mt-4 text-xs font-semibold text-[#764ba2] text-right">👍 ❤️ Live WhatsApp Feedback</p>
+            </div>
           </div>
         </div>
       </section>
