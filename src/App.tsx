@@ -58,7 +58,7 @@ const FAQS = [
   },
   {
     q: "My doctor already gave me medicines. Should I still attend?",
-    a: "Yes. Diet and lifestyle directly support your medication's effectiveness. Many women reduce their dependence on medication after following this protocol — always in consultation with their doctor. This session complements, not replaces, medical treatment.",
+    a: "Yes. Diet and lifestyle support your overall wellbeing alongside your treatment. Many women find that understanding their PCOS type helps them make better food choices that complement their prescribed care. Always consult your doctor before making any changes to your treatment. This session is educational, not a replacement for medical advice.",
   },
   {
     q: "Will they try to sell me something expensive?",
@@ -162,10 +162,10 @@ export default function App() {
             <span>ZOOM</span>
           </div>
 
-          {/* NEW HEADLINE */}
+          {/* HEADLINE */}
           <h1 className="mx-auto mt-2 text-2xl font-extrabold leading-tight text-white md:text-4xl lg:text-5xl">
-            Tamil Women With PCOS: Discover the 100-Day Protocol That Reversed Irregular Periods, Stubborn Weight & Hormonal Chaos —{" "}
-            <span className="text-[#6ee7b7]">Naturally, Without Expensive Medicines</span>
+            Frustrated With PCOS?{" "}
+            <span className="text-[#6ee7b7]">There's a Reason Generic Diets Don't Work For You.</span>
           </h1>
 
           {/* VSL VIDEO — immediately below headline so it's above the fold */}
@@ -233,7 +233,7 @@ export default function App() {
 
           {/* SUBHEADLINE */}
           <p className="mx-auto mt-5 max-w-2xl text-base text-white/85 md:text-lg">
-            Join Clinical Dietitian <strong className="text-white">Aysha Nasreen</strong> (MPhil Nutrition · 12 Yrs · 100+ PCOS Reversals) for a FREE 2-Hour Live Zoom Masterclass — and finally understand WHY your body isn't responding to regular diets.
+            In this FREE 2-Hour Live Masterclass, Clinical Dietitian <strong className="text-white">Aysha Nasreen</strong> (MPhil Nutrition · 12 Yrs · 100+ Women Helped) explains your PCOS type and gives you a clear, step-by-step food protocol — so you finally know exactly what to eat.
           </p>
 
           {/* SOCIAL PROOF BAR */}
@@ -249,10 +249,10 @@ export default function App() {
           <ul className="mx-auto mt-5 max-w-lg space-y-2 text-left text-sm text-white/95 md:text-base">
             {[
               "Identify your exact PCOS type in the first 20 minutes",
-              "The food sequence that lowers insulin and balances hormones naturally",
-              "Why 90% of PCOS diets fail — and what to do instead",
-              "3 kitchen foods that reduce cysts and lower testosterone",
-              "The step-by-step 100-day roadmap Aysha used with 100+ Tamil women",
+              "The food sequence that supports healthy insulin response and hormone balance",
+              "Why most PCOS diets don't work — and what to do instead",
+              "3 kitchen foods that support hormone health naturally",
+              "The step-by-step 100-day food roadmap Aysha uses with her clients",
             ].map((b, i) => (
               <li key={i} className="flex items-start gap-2">
                 <span className="mt-0.5 shrink-0 text-[#6ee7b7]">✓</span>
@@ -296,7 +296,7 @@ export default function App() {
               <p className="text-sm text-[#764ba2]">Clinical Dietitian | MPhil Nutrition | 12 Years Experience</p>
               {/* Credibility bar */}
               <div className="mt-3 flex flex-wrap gap-2">
-                {["🎓 MPhil Nutrition", "🏥 12 Yrs Clinical Practice", "👩 100+ PCOS Reversals", "📍 Tamil Nadu"].map((badge) => (
+                {["🎓 MPhil Nutrition", "🏥 12 Yrs Clinical Practice", "👩 100+ Women Helped", "📍 Tamil Nadu"].map((badge) => (
                   <span key={badge} className="rounded-full bg-[#f5f3ff] px-3 py-1 text-xs font-semibold text-[#764ba2]">{badge}</span>
                 ))}
               </div>
@@ -307,7 +307,7 @@ export default function App() {
                 <li>✓ MPhil in Nutrition</li>
                 <li>✓ Clinical Dietitian</li>
                 <li>✓ 12 years experience</li>
-                <li>✓ 100+ PCOS transformations</li>
+                <li>✓ 100+ women helped</li>
               </ul>
             </div>
           </div>
@@ -317,6 +317,51 @@ export default function App() {
               className="rounded-xl bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-8 py-4 text-base font-extrabold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
             >
               Learn From Aysha — Register FREE →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── QUALIFICATION SECTION ── */}
+      <section className="bg-gradient-to-br from-[#f5f3ff] to-[#ede9fe] px-5 py-12 md:py-16">
+        <div className="mx-auto max-w-3xl">
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-[#764ba2]">Before You Scroll Further</p>
+          <h2 className="mt-2 text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">
+            Is This Masterclass For You?
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-[#555]">
+            Check the ones that apply to you:
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {[
+              { icon: "📅", text: "Irregular or missed periods" },
+              { icon: "⚖️", text: "Unexplained weight gain or difficulty losing weight" },
+              { icon: "💇", text: "Hair fall, acne, or skin issues related to hormones" },
+              { icon: "😴", text: "Constant cravings, low energy, or brain fog" },
+              { icon: "🥗", text: "Confusion about what to eat with PCOS" },
+              { icon: "😤", text: "Conflicting advice that leaves you more lost than before" },
+            ].map(({ icon, text }) => (
+              <div key={text} className="flex items-center gap-3 rounded-xl bg-white px-5 py-4 shadow-sm border border-purple-100">
+                <span className="text-xl shrink-0">{icon}</span>
+                <span className="text-sm font-medium text-[#1f2937]">{text}</span>
+                <span className="ml-auto shrink-0 text-[#764ba2] font-bold text-lg">✓</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 rounded-2xl bg-white border-l-4 border-[#764ba2] px-6 py-5 shadow-sm">
+            <p className="text-base font-semibold text-[#1f2937] leading-relaxed">
+              If you said yes to even one of the above — this masterclass was created specifically for you.
+            </p>
+            <p className="mt-2 text-sm text-[#555]">
+              Aysha Nasreen has spent 12 years helping Tamil women with exactly these symptoms understand their bodies and make food choices that actually support their health.
+            </p>
+          </div>
+          <div className="mt-8 text-center">
+            <button
+              onClick={openModal}
+              className="rounded-xl bg-gradient-to-r from-[#764ba2] to-[#667eea] px-8 py-4 text-base font-extrabold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              Yes, This Is For Me — Reserve My Seat →
             </button>
           </div>
         </div>
@@ -347,11 +392,30 @@ export default function App() {
       {/* ── TESTIMONIALS ── */}
       <section className="px-5 py-12 md:py-16">
         <div className="mx-auto max-w-6xl text-center">
-          <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">What Women Are Saying</h2>
-          <p className="mt-2 text-xs text-[#764ba2] font-bold animate-pulse">
-            🔍 Click/Tap any image to zoom & read in full screen
+          <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">Real Women. Real WhatsApp Messages. Real Results.</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[#555]">
+            These are unedited messages from women who attended Aysha's previous sessions.
           </p>
-          <div className="mt-8 flex flex-col gap-8 items-center">
+
+          {/* KEY QUOTE HIGHLIGHTS */}
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[
+              { quote: "Consistency is the most important factor — I finally understood that today.", icon: "💡" },
+              { quote: "Felt good to hear our problems discussed freely and without judgment.", icon: "🤝" },
+              { quote: "All my doubts were answered patiently. Such an insightful session.", icon: "⭐" },
+            ].map(({ quote, icon }) => (
+              <div key={quote} className="rounded-2xl bg-[#f5f3ff] border border-purple-100 px-5 py-4 text-left shadow-sm">
+                <span className="text-2xl">{icon}</span>
+                <p className="mt-2 text-sm font-medium text-[#1f2937] leading-relaxed">"{quote}"</p>
+                <p className="mt-2 text-xs text-[#764ba2] font-semibold">— Live Attendee</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 text-xs text-[#764ba2] font-bold animate-pulse">
+            🔍 Click/Tap any image below to zoom & read in full screen
+          </p>
+          <div className="mt-6 flex flex-col gap-8 items-center">
             {[
               { src: "/feedback1.png", label: "Live WhatsApp Feedback from Mahalakshmi" },
               { src: "/feedback2.png", label: "Live WhatsApp Feedback from Keerthana" },
@@ -384,6 +448,45 @@ export default function App() {
             >
               I Want Results Like These — Reserve My Seat →
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FUTURE STATE ── */}
+      <section className="bg-gradient-to-br from-[#064e3b] to-[#0f766e] px-5 py-14 md:py-20 text-white">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-white/70">Picture This</p>
+          <h2 className="mt-2 text-2xl font-extrabold md:text-4xl">Imagine The Next 90 Days</h2>
+          <p className="mx-auto mt-4 max-w-xl text-base text-white/80">
+            What changes when you finally have the right information for your body:
+          </p>
+          <div className="mt-10 grid grid-cols-1 gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: "🧠", title: "Clarity replaces confusion", body: "You wake up knowing exactly what to eat — and why it works for YOUR hormones." },
+              { icon: "🍽️", title: "Confident food choices", body: "No more second-guessing every meal. You have a protocol designed for your PCOS type." },
+              { icon: "⚡", title: "Energy starts returning", body: "As your food choices align with your body's needs, the constant fatigue begins to lift." },
+              { icon: "📋", title: "A clear roadmap", body: "Not another diet to try and abandon. A 100-day structured plan with a clinical foundation." },
+              { icon: "😌", title: "Less stress around food", body: "Food stops being the enemy. It becomes your most powerful tool for managing PCOS." },
+              { icon: "💪", title: "You're finally in control", body: "You understand your body. You know what helps. You stop being a passenger in your own health." },
+            ].map(({ icon, title, body }) => (
+              <div key={title} className="rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 px-5 py-5">
+                <div className="text-2xl mb-2">{icon}</div>
+                <h4 className="font-bold text-white text-sm">{title}</h4>
+                <p className="mt-1 text-xs text-white/75 leading-relaxed">{body}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mx-auto mt-10 max-w-lg text-base font-semibold text-white/90 italic">
+            "One 2-hour session. A lifetime of clarity about your body."
+          </p>
+          <div className="mt-8">
+            <button
+              onClick={openModal}
+              className="rounded-xl bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-8 py-4 text-base font-extrabold text-white shadow-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              I'm Ready — Reserve My FREE Seat →
+            </button>
+            <p className="mt-3 text-xs text-white/50">Free · Limited seats · Zoom link via WhatsApp</p>
           </div>
         </div>
       </section>

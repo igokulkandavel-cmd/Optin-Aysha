@@ -7,11 +7,11 @@ import {
 
 export function Features() {
   const learnItems = [
-    { icon: <Activity className="h-6 w-6" />, title: "The 4 types of PCOS", desc: "Which one is yours?" },
-    { icon: <XCircle className="h-6 w-6" />, title: "Why generic diets don't work", desc: "Understand the root cause" },
-    { icon: <Flame className="h-6 w-6" />, title: "Powerful kitchen foods", desc: "Fenugreek, Horse gram, Cinnamon" },
-    { icon: <Route className="h-6 w-6" />, title: "How my protocol works", desc: "Step-by-step roadmap to healing" },
-    { icon: <HeartPulse className="h-6 w-6" />, title: "Control blood sugar", desc: "Insulin and hormone management" },
+    { icon: <Activity className="h-6 w-6" />, title: "Finally Understand Why Your PCOS Keeps Coming Back", desc: "Identify your exact type — and stop guessing forever" },
+    { icon: <XCircle className="h-6 w-6" />, title: "Stop Wasting Time on Diets That Weren't Made for PCOS", desc: "The root cause most dietitians never explain to you" },
+    { icon: <Flame className="h-6 w-6" />, title: "Use Kitchen Foods That Support Hormone Balance", desc: "Fenugreek, horse gram, cinnamon — how to use them right" },
+    { icon: <Route className="h-6 w-6" />, title: "Follow a Clear 100-Day Roadmap — No More Guessing", desc: "Step-by-step, food-first, clinically guided protocol" },
+    { icon: <HeartPulse className="h-6 w-6" />, title: "Break the Insulin-Weight Cycle Holding You Back", desc: "Understand the hormone pattern driving most PCOS symptoms" },
   ];
 
   const whoItems = [
@@ -55,7 +55,7 @@ export function Features() {
           {/* SECTION 1: What You'll Learn (Card Grid) */}
           <div>
             <h3 className="mb-8 text-center text-2xl font-bold text-[#1f2937] md:text-left md:text-3xl">
-              What You'll Learn
+              What You'll Walk Away With
             </h3>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {learnItems.map((item, i) => (
