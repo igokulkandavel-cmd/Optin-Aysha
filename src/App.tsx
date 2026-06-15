@@ -144,7 +144,7 @@ export default function App() {
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333]">
+    <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333] pb-16 md:pb-0">
 
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-[#064e3b] to-[#0f766e] px-5 py-10 md:py-14">
@@ -364,21 +364,6 @@ export default function App() {
             These are unedited messages from women who attended Aysha's previous sessions.
           </p>
 
-          {/* KEY QUOTE HIGHLIGHTS */}
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              { quote: "Consistency is the most important factor — I finally understood that today.", icon: "💡" },
-              { quote: "Felt good to hear our problems discussed freely and without judgment.", icon: "🤝" },
-              { quote: "All my doubts were answered patiently. Such an insightful session.", icon: "⭐" },
-            ].map(({ quote, icon }) => (
-              <div key={quote} className="rounded-2xl bg-[#f5f3ff] border border-purple-100 px-5 py-4 text-left shadow-sm">
-                <span className="text-2xl">{icon}</span>
-                <p className="mt-2 text-sm font-medium text-[#1f2937] leading-relaxed">"{quote}"</p>
-                <p className="mt-2 text-xs text-[#764ba2] font-semibold">— Live Attendee</p>
-              </div>
-            ))}
-          </div>
-
           <p className="mt-6 text-xs text-[#764ba2] font-bold animate-pulse">
             🔍 Click/Tap any image below to zoom & read in full screen
           </p>
@@ -518,7 +503,7 @@ export default function App() {
       </footer>
 
       {/* ── STICKY MOBILE CTA BAR ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
+      <div className={`fixed bottom-0 left-0 right-0 z-40 md:hidden ${isModalOpen ? "hidden" : ""}`}>
         <button
           onClick={openModal}
           className="w-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-4 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-2xl"
