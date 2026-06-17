@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Features } from "@/components/ui/features-4";
 import { Video } from "lucide-react";
 
@@ -23,88 +23,124 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-type FormState = { name: string; mobile: string; email: string; consent: boolean };
-type Errors = Partial<Record<keyof FormState, string>>;
+function DigyGoWebinarForm() {
+  useEffect(() => {
+    const formEl = document.getElementById("dgf_webinar_form_f") as HTMLFormElement | null;
+    if (!formEl) return;
+
+    const _m: Record<string, string[]> = {};
+    (window as unknown as Record<string, unknown>)["dgf_webinar_form_ms"] = (k: string, el: HTMLInputElement) => {
+      _m[k] = _m[k] || [];
+      const i = _m[k].indexOf(el.value);
+      el.checked ? (i < 0 && _m[k].push(el.value)) : (i >= 0 && _m[k].splice(i, 1));
+    };
+
+    function handleSubmit(e: Event) {
+      e.preventDefault();
+      const target = e.target as HTMLFormElement;
+      const missing: string[] = [];
+      target.querySelectorAll<HTMLInputElement>("[required]").forEach((el) => {
+        if (!el.value || !el.value.trim()) {
+          const l =
+            el.getAttribute("data-label") ||
+            el.closest(".dgf-field")?.querySelector(".dgf-label")?.textContent ||
+            "Field";
+          missing.push(l.replace(/\*$/, "").trim());
+        }
+      });
+      if (missing.length) {
+        alert("Please fill in: " + missing.join(", "));
+        return;
+      }
+
+      const btn = target.querySelector<HTMLButtonElement>("button[type=submit]")!;
+      btn.disabled = true;
+      btn.textContent = "Submitting…";
+
+      const data: Record<string, string> = {};
+      target.querySelectorAll<HTMLInputElement>("[data-label]").forEach((el) => {
+        const k = el.getAttribute("data-label")!;
+        if (el.type === "radio") {
+          if (el.checked) data[k] = el.value;
+        } else if (el.type === "checkbox" && !el.dataset["declaration"]) {
+          data[k] = el.checked ? "true" : "";
+        } else if (el.type !== "checkbox") {
+          data[k] = el.value;
+        }
+      });
+      Object.keys(_m).forEach((k) => { data[k] = _m[k].join(","); });
+
+      fetch("https://crm.digygo.in/api/public/forms/webinar-form/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data }),
+      })
+        .then((r) => r.json())
+        .then((j) => {
+          const wrap = document.getElementById("dgf_webinar_form")?.querySelector(".dgf-wrap");
+          if (wrap) {
+            wrap.innerHTML =
+              `<div class="dgf-ok"><div class="dgf-ok-icon"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#ffffff" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="dgf-ok-msg">${j.message || "Thank you!"}</p></div>`;
+          }
+          // @ts-expect-error fbq global
+          if (typeof window !== "undefined" && window.fbq) window.fbq("track", "Lead");
+        })
+        .catch(() => {
+          btn.disabled = false;
+          btn.textContent = "Secure My FREE Seat →";
+          alert("Submission failed. Please try again.");
+        });
+    }
+
+    formEl.addEventListener("submit", handleSubmit);
+    return () => formEl.removeEventListener("submit", handleSubmit);
+  }, []);
+
+  return (
+    <div id="dgf_webinar_form" style={{ fontFamily: "system-ui,-apple-system,sans-serif", maxWidth: "448px", margin: "0 auto" }}>
+      <style>{`
+        #dgf_webinar_form *{box-sizing:border-box}
+        #dgf_webinar_form .dgf-wrap{background:#ffffff;border-radius:16px;padding:32px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+        #dgf_webinar_form .dgf-field{margin-bottom:16px}
+        #dgf_webinar_form .dgf-label{display:block;font-size:12px;font-weight:600;color:#1c1410;margin-bottom:6px}
+        #dgf_webinar_form .dgf-req{color:#ef4444;margin-left:2px}
+        #dgf_webinar_form .dgf-input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.7);font-size:13px;color:#1c1410;outline:none;font-family:inherit;transition:border-color .15s}
+        #dgf_webinar_form .dgf-input:focus{border-color:#108a00}
+        #dgf_webinar_form .dgf-btn{width:100%;padding:12px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;background:#108a00;color:#ffffff;margin-top:8px;font-family:inherit;transition:opacity .2s}
+        #dgf_webinar_form .dgf-btn:disabled{opacity:.6;cursor:not-allowed}
+        #dgf_webinar_form .dgf-ok{text-align:center;padding:32px 16px}
+        #dgf_webinar_form .dgf-ok-icon{width:64px;height:64px;border-radius:50%;background:#108a00;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+        #dgf_webinar_form .dgf-ok-msg{font-size:18px;font-weight:700;color:#1c1410}
+      `}</style>
+      <div className="dgf-wrap">
+        <p className="dgf-title">Webinar Form</p>
+        <form id="dgf_webinar_form_f">
+          <div className="dgf-field">
+            <label className="dgf-label">Full Name<span className="dgf-req">*</span></label>
+            <input type="text" className="dgf-input" data-label="Full Name" placeholder="Your name" required />
+          </div>
+          <div className="dgf-field">
+            <label className="dgf-label">WhatsApp Number<span className="dgf-req">*</span></label>
+            <input type="tel" className="dgf-input" data-label="WhatsApp Number" placeholder="" required />
+          </div>
+          <div className="dgf-field">
+            <label className="dgf-label">Email<span className="dgf-req">*</span></label>
+            <input type="email" className="dgf-input" data-label="Email" placeholder="" required />
+          </div>
+          <button type="submit" className="dgf-btn">Secure My FREE Seat →</button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 function Landing() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form, setForm] = useState<FormState>({
-    name: "",
-    mobile: "",
-    email: "",
-    consent: true,
-  });
-  const [errors, setErrors] = useState<Errors>({});
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    if (success) {
-      setSuccess(false);
-      setForm({ name: "", mobile: "", email: "", consent: true });
-    }
-  };
-
-  const validate = (): boolean => {
-    const e: Errors = {};
-    if (form.name.trim().length < 2) e.name = "Name must be at least 2 characters";
-    if (!/^[6-9][0-9]{9}$/.test(form.mobile))
-      e.mobile = "Enter valid 10-digit mobile (starts with 6-9)";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = "Enter a valid email address";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  // Google Apps Script Web App URL for Sheets integration
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8VewGPmifhRrDk_x2u7PP7VB23SE-2YAS70op1XAmk_YhRcUz6WduqSp1XFfwXkQ/exec";
-
-  const handleSubmit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
-    if (!validate()) return;
-    setLoading(true);
-    try {
-      const payload = {
-        name: form.name,
-        mobile: form.mobile,
-        email: form.email,
-        timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-        source: "webinar_vsl_page",
-      };
-      
-      console.log("Webinar registration:", payload);
-
-      if (GOOGLE_SCRIPT_URL !== "YOUR_GOOGLE_SCRIPT_WEB_APP_URL") {
-        const searchParams = new URLSearchParams();
-        Object.entries(payload).forEach(([key, value]) => searchParams.append(key, value));
-
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: searchParams.toString(),
-        });
-      } else {
-        console.warn("Google Script URL is missing. Simulating request...");
-        await new Promise((r) => setTimeout(r, 800));
-      }
-
-      // @ts-expect-error fbq global
-      if (typeof window !== "undefined" && window.fbq) window.fbq("track", "Lead");
-      setSuccess(true);
-    } catch (error) {
-      console.error("Submission failed:", error);
-      alert("Oops! Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333]">
@@ -141,7 +177,6 @@ function Landing() {
                       if (typeof window !== "undefined" && window.fbq)
                         // @ts-expect-error fbq
                         window.fbq("track", "ViewContent");
-                      console.log("Video play tracked");
                     }}
                     onPause={() => setIsVideoPlaying(false)}
                   >
@@ -149,13 +184,11 @@ function Landing() {
                     Your browser does not support the video tag.
                   </video>
                   {!isVideoPlaying && (
-                    <div 
+                    <div
                       className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer transition-colors hover:bg-black/40 group"
                       onClick={() => {
                         const vid = document.getElementById("vsl-video") as HTMLVideoElement;
-                        if (vid) {
-                          vid.play();
-                        }
+                        if (vid) vid.play();
                       }}
                     >
                       <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/95 shadow-2xl transition-transform group-hover:scale-110 md:h-24 md:w-24">
@@ -203,101 +236,14 @@ function Landing() {
               </svg>
             </button>
             <h2 className="text-center text-2xl font-extrabold text-[#1f2937] md:text-3xl">
-            Register For FREE — Seats Limited!
-          </h2>
-          <p className="mt-2 text-center text-[#555]">
-            Webinar link WhatsApp-ல instant-ஆ கிடைக்கும்
-          </p>
-
-          {success ? (
-            <div className="mt-8 rounded-2xl border-2 border-[#28a745]/30 bg-[#f0fdf4] p-6 text-center">
-              <div className="text-2xl font-bold text-[#28a745]">
-                ✅ Registration Successful!
-              </div>
-              <p className="mt-3 text-[#333]">
-                உங்க webinar seat confirm ஆயிருச்சு!
-              </p>
-              <p className="mt-2 text-sm text-[#555]">
-                📱 Webinar link அடுத்த 5 நிமிஷத்துல WhatsApp-க்கு வரும்.
-                <br />
-                📧 Email-லும் confirmation அனுப்பியாச்சு.
-              </p>
-              <div className="mt-4 rounded-xl bg-white p-4 text-sm">
-                📅 14.06.2026 &nbsp;•&nbsp; ⏰ 11:00 AM – 01:00 PM IST
-              </div>
+              Register For FREE — Seats Limited!
+            </h2>
+            <p className="mt-2 text-center text-[#555]">
+              Webinar link WhatsApp-ல instant-ஆ கிடைக்கும்
+            </p>
+            <div className="mt-6">
+              <DigyGoWebinarForm />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-7 space-y-5" noValidate>
-              <Field
-                label="Name *"
-                error={errors.name}
-                input={
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Name"
-                    className="form-input"
-                    required
-                  />
-                }
-              />
-              <Field
-                label="WhatsApp Number *"
-                error={errors.mobile}
-                input={
-                  <input
-                    type="tel"
-                    value={form.mobile}
-                    onChange={(e) =>
-                      setForm({ ...form, mobile: e.target.value.replace(/\D/g, "").slice(0, 10) })
-                    }
-                    placeholder="9876543210"
-                    className="form-input"
-                    required
-                  />
-                }
-              />
-              <Field
-                label="Email *"
-                error={errors.email}
-                input={
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="yourname@example.com"
-                    className="form-input"
-                    required
-                  />
-                }
-              />
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-full bg-gradient-to-r from-[#667eea] to-[#764ba2] py-4 text-lg font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-70"
-              >
-                {loading ? (
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Securing...
-                  </span>
-                ) : (
-                  "Secure My FREE Seat →"
-                )}
-              </button>
-
-              <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-[#555]">
-                <span>🔒 100% Free</span>
-                <span>⚡ Limited Seats</span>
-                <span>📱 Link via WhatsApp</span>
-              </div>
-              <p className="text-center text-xs text-[#777]">
-                No spam. Webinar link WhatsApp-ல secure-ஆ அனுப்பப்படும். Privacy guaranteed.
-              </p>
-            </form>
-          )}
           </div>
         </div>
       )}
@@ -366,14 +312,14 @@ function Landing() {
             🔍 Click/Tap any image to zoom & read in full screen
           </p>
           <div className="mt-8 flex flex-col gap-8 items-center">
-            <div 
+            <div
               onClick={() => setZoomImage("/feedback1.png")}
               className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
             >
               <div className="relative overflow-hidden rounded-2xl">
-                <img 
-                  src="/feedback1.png" 
-                  alt="Mahalakshmi's Webinar Feedback" 
+                <img
+                  src="/feedback1.png"
+                  alt="Mahalakshmi's Webinar Feedback"
                   className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
                 />
                 <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
@@ -387,14 +333,14 @@ function Landing() {
               </p>
             </div>
 
-            <div 
+            <div
               onClick={() => setZoomImage("/feedback2.png")}
               className="group relative cursor-zoom-in rounded-3xl bg-white p-3 shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl border border-gray-100 w-full max-w-2xl"
             >
               <div className="relative overflow-hidden rounded-2xl">
-                <img 
-                  src="/feedback2.png" 
-                  alt="Keerthana's Webinar Feedback" 
+                <img
+                  src="/feedback2.png"
+                  alt="Keerthana's Webinar Feedback"
                   className="w-full h-auto rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
                 />
                 <div className="absolute inset-0 bg-[#764ba2]/5 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
@@ -450,98 +396,33 @@ function Landing() {
             <span>📞 <a href="tel:+919976192688" className="hover:text-[#764ba2] transition-colors">+91 99761 92688</a></span>
             <span>📧 <a href="mailto:sheizenwellness@gmail.com" className="hover:text-[#764ba2] transition-colors">sheizenwellness@gmail.com</a></span>
           </div>
-
           <p className="mt-4 text-xs">
             © 2026 Aysha Nasreen Nutrition. All rights reserved.
           </p>
         </div>
+      </footer>
+
       {/* LIGHTBOX ZOOM MODAL */}
       {zoomImage && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md cursor-pointer animate-in fade-in duration-200"
           onClick={() => setZoomImage(null)}
         >
           <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
-            <button 
+            <button
               className="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl font-bold bg-white/10 rounded-full h-10 w-10 flex items-center justify-center transition-colors"
               onClick={() => setZoomImage(null)}
             >
               &times;
             </button>
-            <img 
-              src={zoomImage} 
-              alt="Zoomed Feedback" 
+            <img
+              src={zoomImage}
+              alt="Zoomed Feedback"
               className="w-full h-auto object-contain rounded-2xl max-h-[85vh] shadow-2xl animate-in zoom-in-95 duration-200"
             />
           </div>
         </div>
       )}
-
-      <style>{`
-        .form-input {
-          width: 100%;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 14px 16px;
-          font-size: 16px;
-          color: #1f2937;
-          background: #fff;
-          transition: all .2s;
-          outline: none;
-        }
-        .form-input:focus {
-          border-color: #764ba2;
-          box-shadow: 0 0 0 4px rgba(118,75,162,.12);
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function DetailCard({
-  icon,
-  title,
-  children,
-}: {
-  icon: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-2xl bg-white p-7 shadow-md transition-shadow hover:shadow-xl">
-      <div className="text-3xl">{icon}</div>
-      <h3 className="mt-3 text-lg font-bold text-[#1f2937]">{title}</h3>
-      <ul className="mt-4 space-y-2 text-[#555] [&>li]:relative [&>li]:pl-5 [&>li:before]:absolute [&>li:before]:left-0 [&>li:before]:top-2.5 [&>li:before]:h-1.5 [&>li:before]:w-1.5 [&>li:before]:rounded-full [&>li:before]:bg-[#764ba2]">
-        {children}
-      </ul>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  input,
-  error,
-}: {
-  label: string;
-  input: React.ReactNode;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-semibold text-[#333]">{label}</label>
-      {input}
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-    </div>
-  );
-}
-
-function Testimonial({ quote, name }: { quote: string; name: string }) {
-  return (
-    <div className="rounded-2xl bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
-      <div className="text-3xl text-[#764ba2]">"</div>
-      <p className="-mt-2 leading-relaxed text-[#444]">{quote}</p>
-      <p className="mt-4 text-sm font-semibold text-[#764ba2]">{name}</p>
     </div>
   );
 }
