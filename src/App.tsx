@@ -16,6 +16,38 @@ function getTimeLeft() {
   };
 }
 
+// Isolated component — only this re-renders every second, not App
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div className="mt-8">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/60">
+        Webinar starts in
+      </p>
+      <div className="inline-flex gap-3 md:gap-4">
+        {[
+          { label: "Days", value: timeLeft.days },
+          { label: "Hours", value: timeLeft.hours },
+          { label: "Mins", value: timeLeft.minutes },
+          { label: "Secs", value: timeLeft.seconds },
+        ].map(({ label, value }) => (
+          <div key={label} className="flex flex-col items-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 text-2xl font-extrabold text-white backdrop-blur-sm ring-1 ring-white/20 md:h-16 md:w-16 md:text-3xl">
+              {pad(value)}
+            </div>
+            <span className="mt-1 text-xs font-semibold uppercase tracking-widest text-white/60">{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const CRM_FORM_HTML = `<style>
 #dgf_webinar_form *{box-sizing:border-box}
 #dgf_webinar_form .dgf-wrap{background:transparent;border-radius:0;padding:0;box-shadow:none}
@@ -33,10 +65,10 @@ const CRM_FORM_HTML = `<style>
 #dgf_webinar_form .dgf-ok-msg{font-size:18px;font-weight:700;color:#1c1410}
 </style>
 <div class="dgf-wrap">
-<form id="dgf_webinar_form_f" novalidate>
+<form id="dgf_webinar_form_f">
 <div class="dgf-field"><label class="dgf-label">Full Name<span class="dgf-req">*</span></label><input type="text" class="dgf-input" data-label="Full Name" placeholder="Your name" required></div>
-<div class="dgf-field"><label class="dgf-label">WhatsApp Number<span class="dgf-req">*</span></label><input type="tel" class="dgf-input" data-label="WhatsApp Number" placeholder="9876543210" required></div>
-<div class="dgf-field"><label class="dgf-label">Email<span class="dgf-req">*</span></label><input type="email" class="dgf-input" data-label="Email" placeholder="yourname@example.com" required></div>
+<div class="dgf-field"><label class="dgf-label">WhatsApp Number<span class="dgf-req">*</span></label><input type="tel" class="dgf-input" data-label="WhatsApp Number" placeholder="" required></div>
+<div class="dgf-field"><label class="dgf-label">Email<span class="dgf-req">*</span></label><input type="email" class="dgf-input" data-label="Email" placeholder="" required></div>
 <button type="submit" class="dgf-btn">Secure My FREE Seat →</button>
 </form>
 </div>`;
@@ -90,17 +122,10 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
-  // Countdown timer
-  useEffect(() => {
-    const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   // CRM form submit handler
   useEffect(() => {
@@ -110,6 +135,15 @@ export default function App() {
 
     const handleSubmit = async (e: Event) => {
       e.preventDefault();
+      const missing: string[] = [];
+      form.querySelectorAll<HTMLInputElement>("[required]").forEach((el) => {
+        if (!el.value || !el.value.trim()) {
+          const label = el.getAttribute("data-label") || el.closest(".dgf-field")?.querySelector(".dgf-label")?.textContent || "Field";
+          missing.push(label.replace(/\*$/, "").trim());
+        }
+      });
+      if (missing.length) { alert("Please fill in: " + missing.join(", ")); return; }
+
       const btn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
       btn.disabled = true;
       btn.textContent = "Submitting…";
@@ -140,8 +174,6 @@ export default function App() {
     form.addEventListener("submit", handleSubmit);
     return () => form.removeEventListener("submit", handleSubmit);
   }, [isModalOpen]);
-
-  const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe] text-[#333] pb-16 md:pb-0">
@@ -210,26 +242,7 @@ export default function App() {
           </div>
 
           {/* COUNTDOWN TIMER */}
-          <div className="mt-8">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/60">
-              Webinar starts in
-            </p>
-            <div className="inline-flex gap-3 md:gap-4">
-              {[
-                { label: "Days", value: timeLeft.days },
-                { label: "Hours", value: timeLeft.hours },
-                { label: "Mins", value: timeLeft.minutes },
-                { label: "Secs", value: timeLeft.seconds },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex flex-col items-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 text-2xl font-extrabold text-white backdrop-blur-sm ring-1 ring-white/20 md:h-16 md:w-16 md:text-3xl">
-                    {pad(value)}
-                  </div>
-                  <span className="mt-1 text-xs font-semibold uppercase tracking-widest text-white/60">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CountdownTimer />
 
           {/* CTA */}
           <div className="mt-8">
